@@ -25,6 +25,7 @@ contract CappedToken is MintableToken {
     */
     function mint(address _to, uint256 _amount) onlyOwner canMint public returns (bool) {
         require(totalSupply_ + _amount <= cap);
+        require(totalSupply_ + _amount >= totalSupply_);
 
         return super.mint(_to, _amount);
     }

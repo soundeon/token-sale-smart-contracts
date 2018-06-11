@@ -15,26 +15,25 @@ contract SoundeonTokenMinter is SoundeonTokenDistributor {
 
     function bulkMint(uint32[] _payment_ids, address[] _receivers, uint256[] _amounts)
         external onlyOwner validateInput(_payment_ids, _receivers, _amounts) {
-        bool success = false;
+        uint totalAmount = 0;
 
         for (uint i = 0; i < _receivers.length; i++) {
             require(_receivers[i] != address(0));
 
             if (!processedTransactions[_payment_ids[i]]) {
-                uint onePercent = _amounts[i] / 65;
-
-                success = token.mint(_receivers[i], _amounts[i]);
-                success = success && token.mint(reserveFundAddress, onePercent * 2);
-                success = success && token.mint(artistManifestoFundAddress, onePercent * 6);
-                success = success && token.mint(bountyPoolAddress, onePercent * 3);
-                success = success && token.mint(teamPoolAddress, onePercent * 14);
-                success = success && token.mint(earlyBackersPoolAddress, onePercent * 4);
-                success = success && token.mint(advisorsAndAmbassadorsAddress, onePercent * 6);
-
-                require(success);
-
                 processedTransactions[_payment_ids[i]] = true;
+
+                token.mint(_receivers[i], _amounts[i]);
+
+                totalAmount += _amounts[i] / 65;
             }
         }
+
+        require(token.mint(reserveFundAddress, totalAmount * 2));
+        require(token.mint(artistManifestoFundAddress, totalAmount * 6));
+        require(token.mint(bountyPoolAddress, totalAmount * 3));
+        require(token.mint(teamPoolAddress, totalAmount * 14));
+        require(token.mint(earlyBackersPoolAddress, totalAmount * 4));
+        require(token.mint(advisorsAndAmbassadorsAddress, totalAmount * 6));
     }
 }

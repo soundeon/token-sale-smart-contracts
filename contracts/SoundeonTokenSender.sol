@@ -11,9 +11,9 @@ contract SoundeonTokenSender is SoundeonTokenDistributor {
 
         for (uint i = 0; i < _receivers.length; i++) {
             if (!processedTransactions[_payment_ids[i]]) {
-                require(token.transfer(_receivers[i], _amounts[i]));
-
                 processedTransactions[_payment_ids[i]] = true;
+
+                token.transfer(_receivers[i], _amounts[i]);
             }
         }
     }
@@ -23,9 +23,9 @@ contract SoundeonTokenSender is SoundeonTokenDistributor {
 
         for (uint i = 0; i < _receivers.length; i++) {
             if (!processedTransactions[_payment_ids[i]]) {
-                require(token.transferFrom(_from, _receivers[i], _amounts[i]));
-
                 processedTransactions[_payment_ids[i]] = true;
+
+                token.transferFrom(_from, _receivers[i], _amounts[i]);
             }
         }
     }
